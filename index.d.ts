@@ -14,9 +14,7 @@ declare module 'mbr-serv-request' {
     (this: Request, request: Request): void;
   }
 
-  interface RouteAsString {
-    string;
-  }
+  type RouteAsString = string;
 
   interface RouteAsObj {
     [key: string]: RouteAsFunc;
@@ -78,8 +76,8 @@ declare module 'mbr-serv-request' {
     setCookie(name: string, value: string, options?: CookieOptions): void;
     delCookie(name: string): void;
 
-    match(regExp: RegExp, callback: (this: Request, match: RegExpExecArray, request: Request) => void): RegExpExecArray;
-    send(data: string | Buffer, extension?: string): void;
+    match(regExp: RegExp, callback: (this: Request, match: RegExpExecArray, request: Request) => void): RegExpExecArray | null;
+    send(data?: string | Buffer, extension?: string): void;
 
     route(router: Router): boolean | undefined;
 

@@ -93,7 +93,7 @@ Request.prototype.delCookie = function (name) {
 }
 
 Request.prototype.match = function (regExp, callback) {
-  const regMatch = regExp.exec(this.getPath());
+  const regMatch = regExp.exec(this.getUrl().getPath());
   if (regMatch && callback) {
     callback.call(this, regMatch, this);
   }

@@ -49,12 +49,12 @@ Url.prototype.getDirectory = function () {
 Url.prototype.getExtension = function () {
   if (this.extension === undefined) {
     const name = this.getFileName();
-    const dotPos = path.lastIndexOf('.');
+    const dotPos = name.lastIndexOf('.');
 
     this.extension = dotPos > -1 ? name.substring(dotPos + 1) : null;
   }
 
-  return this.directory;
+  return this.extension;
 }
 Url.prototype.normalize = function (root) {
   const realRoot = path.resolve(root) + '/';
