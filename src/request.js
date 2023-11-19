@@ -1,6 +1,7 @@
 const { HEADER, MIME } = require('./constants.js');
 const utils = require('./utils.js');
 const { Url } = require('./url.js');
+const http = require('http');
 
 const empty = {};
 
