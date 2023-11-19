@@ -1,0 +1,25 @@
+{
+  "name": "mbr-serv-request",
+  "version": "0.1.0",
+  "description": "Request wrapper for mbr-serv",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MadBrozzeR/mbr-serv-request.git"
+  },
+  "keywords": [
+    "request",
+    "mbr-serv",
+    "server",
+    "http"
+  ],
+  "author": "MadBrozzeR",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MadBrozzeR/mbr-serv-request/issues"
+  },
+  "homepage": "https://github.com/MadBrozzeR/mbr-serv-request#readme"
+}
