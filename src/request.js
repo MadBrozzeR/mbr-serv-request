@@ -122,7 +122,7 @@ Request.prototype.route = function (router) {
     route.call(this, this);
     return true;
   }
-  if (this.request.method = 'GET' && typeof route === 'string') {
+  if (this.request.method === 'GET' && typeof route === 'string') {
     utils.readFile(route)
       .then(function (data) {
         request.send(data, url.getExtension());
@@ -154,30 +154,34 @@ Request.prototype.simpleServer = Request.prototype.serve = function (options) {
 
   const request = this;
 
-  let url = this.getUrl();
-  if (url.getPath() === '/') {
-    url = this.getUrl(options.index || '/index.html');
-  }
+  const url = this.getUrl();
 
-  const normalPath = url.normalize(options.root);
+  const filePath = url.getPath() === '/' ? (options.index || '/index.html') : url.path;
 
-  if (!normalPath) {
-    console.log('ERROR: Out of root (' + url.getPath() + ')');
-    this.status = 404;
-    this.send();
-
-    return;
-  }
-
-  utils.readFile(normalPath)
+  this.getFile({ file: filePath, root: options.root })
     .then(function (data) {
       const extension = url.getExtension();
       request.send(data, extension);
     })
-    .catch(function () {
+    .catch(function (error) {
+      console.log(error);
       request.status = 404;
       request.send();
     });
+}
+Request.prototype.getFile = function ({ root, file } = {}) {
+  const url = this.getUrl(file);
+  let path = url.getPath();
+
+  if (root) {
+    path = url.normalize(root);
+
+    if (!path) {
+      return Promise.reject(new Error(path + ' is out of root'));
+    }
+  }
+
+  return utils.readFile(path);
 }
 
 Request.prototype.proxy = function (props = empty) {

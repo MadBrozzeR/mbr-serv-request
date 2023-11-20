@@ -2,26 +2,48 @@ const path = require('path');
 const utils = require('./utils.js');
 
 function Url (url) {
-  this.url = (url[0] !== '/' ? '/' : '') + url;
+  this.url;
   this.path;
   this.search;
   this.params;
   this.fileName;
   this.extension;
   this.directory;
+
+  this.set(url);
 };
+Url.prototype.set = function (url) {
+  this.url = (url[0] !== '/' ? '/' : '') + url;
+  this.path = undefined;
+  this.search = '';
+  this.params = undefined;
+  this.fileName = undefined;
+  this.extension = undefined;
+  this.directory = undefined;
+
+  return this;
+}
 Url.prototype.getPath = function () {
   if (!this.path) {
-    const splitted = this.url.split('?');
-    this.path = splitted[0];
-    this.search = splitted[1];
+    const searchPos = this.url.indexOf('?');
+    if (searchPos > -1) {
+      this.path = this.url.substring(0, searchPos);
+      this.search = this.url.substring(searchPos);
+    } else {
+      this.path = this.url;
+      this.search = '';
+    }
   }
   return this.path;
 };
+Url.prototype.getSearch = function () {
+  this.getPath();
+
+  return this.search;
+}
 Url.prototype.getParams = function () {
   if (!this.params) {
-    this.getPath();
-    this.params = utils.parseUrlParams(this.search);
+    this.params = utils.parseUrlParams(this.getSearch());
   }
 
   return this.params;

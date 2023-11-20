@@ -42,7 +42,9 @@ declare module 'mbr-serv-request' {
     extension?: string;
     directory?: string;
 
+    set(url: string): Url;
     getPath(): string;
+    getSearch(): string;
     getParams(): UrlParams;
     getFileName(): string;
     getDirectory(): string;
@@ -56,6 +58,11 @@ declare module 'mbr-serv-request' {
     path?: string;
     method?: string;
     headers: Record<string, number | string | string[] | undefined>;
+  }
+
+  interface GetFileOptions {
+    file?: string;
+    root?: string;
   }
 
   class Request {
@@ -82,6 +89,9 @@ declare module 'mbr-serv-request' {
     route(router: Router): boolean | undefined;
 
     simpleServer(options: ServeOptions): void;
+    serve(options: ServeOptions): void;
+
+    getFile(options?: GetFileOptions): Promise<Buffer>;
 
     getHost(): string | undefined;
 
