@@ -74,6 +74,8 @@ declare module 'mbr-serv-request' {
     cookies: null | Record<string, string>;
     status: number;
 
+    constructor(request: IncomingMessage, response: ServerResponse<IncomingMessage>);
+
     valueOf(): object;
     toJSON(): object;
 
