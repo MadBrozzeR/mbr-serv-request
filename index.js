@@ -1,1 +1,3 @@
-module.exports = require('./src/request.js');
+module.exports = {
+  Request: require('./src/request.js').Request,
+};

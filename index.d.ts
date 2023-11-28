@@ -65,7 +65,7 @@ declare module 'mbr-serv-request' {
     root?: string;
   }
 
-  class Request {
+  export class Request {
     request: IncomingMessage;
     response: ServerResponse<IncomingMessage> & { req: IncomingMessage };
     ip: string;

@@ -227,4 +227,4 @@ Request.prototype.getUrl = function (path) {
   return new Url(path || this.request.url);
 };
 
-module.exports = Request;
+module.exports = { Request };
