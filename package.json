@@ -1,6 +1,6 @@
 {
   "name": "mbr-serv-request",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Request wrapper for mbr-serv",
   "main": "index.js",
   "scripts": {
