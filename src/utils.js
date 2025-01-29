@@ -7,7 +7,7 @@ module.exports.parseUrlParams = function parseUrlParams (urlParams) {
     return result;
   }
 
-  const splitted = urlParams.split('&');
+  const splitted = urlParams.substring(1).split('&');
   for (let index = 0 ; index < splitted.length ; ++index) {
     const splittedParam = splitted[index].split('=');
     const key = splittedParam[0];
