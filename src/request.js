@@ -43,7 +43,9 @@ Request.prototype.getData = function (callback) {
   return new Promise(function (resolve) {
     this.request.on('data', function (data) {cache.push(data); length += data.length;});
     this.request.on('end', function () {
-      resolve(Buffer.concat(cache, length));
+      const data = Buffer.concat(cache, length);
+      callback && callback(data);
+      resolve(data);
     });
   });
 };

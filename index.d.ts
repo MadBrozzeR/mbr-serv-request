@@ -79,7 +79,7 @@ declare module 'mbr-serv-request' {
     valueOf(): object;
     toJSON(): object;
 
-    getData(): Promise<Buffer>;
+    getData(callback?: (data: Buffer) => void): Promise<Buffer>;
     getCookies(): Record<string, string>;
     getCookie(name): string | undefined;
     setCookie(name: string, value: string, options?: CookieOptions): void;
