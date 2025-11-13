@@ -39,10 +39,11 @@ Request.prototype.valueOf = Request.prototype.toJSON = function () {
 Request.prototype.getData = function (callback) {
   const cache = [];
   let length = 0;
+  const request = this;
 
   return new Promise(function (resolve) {
-    this.request.on('data', function (data) {cache.push(data); length += data.length;});
-    this.request.on('end', function () {
+    request.request.on('data', function (data) {cache.push(data); length += data.length;});
+    request.request.on('end', function () {
       const data = Buffer.concat(cache, length);
       callback && callback(data);
       resolve(data);
