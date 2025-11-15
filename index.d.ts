@@ -65,6 +65,17 @@ declare module 'mbr-serv-request' {
     root?: string;
   }
 
+  type SendFileParams = {
+    root?: string;
+    put?: Record<string, string | number>;
+    type?: string;
+    extension?: string;
+  };
+
+  type Preprocessors = {
+    beforeSend?: (this: Request, data: string | Buffer) => Promise<string | Buffer | void | undefined>;
+  };
+
   export class Request {
     request: IncomingMessage;
     response: ServerResponse<IncomingMessage> & { req: IncomingMessage };
@@ -73,6 +84,7 @@ declare module 'mbr-serv-request' {
     headers: Record<string, string>;
     cookies: null | Record<string, string>;
     status: number;
+    preprocessors: Preprocessors;
 
     constructor(request: IncomingMessage, response: ServerResponse<IncomingMessage>);
 
@@ -86,9 +98,10 @@ declare module 'mbr-serv-request' {
     delCookie(name: string): void;
 
     match(regExp: RegExp, callback?: (this: Request, match: RegExpExecArray, request: Request) => void): RegExpExecArray | null;
+    sendNow(data?: string | Buffer): Request;
     send(data?: string | Buffer, extension?: string): void;
 
-    route(router: Router): boolean | undefined;
+    route(router: Router): boolean;
 
     simpleServer(options: ServeOptions): void;
     serve(options: ServeOptions): void;
@@ -102,5 +115,7 @@ declare module 'mbr-serv-request' {
     proxy(options?: ProxyOptions): void;
 
     getUrl(customPath?: string): Url;
+
+    sendFile(file: string, params?: SendFileParams): Promise<Request>;
   }
 }

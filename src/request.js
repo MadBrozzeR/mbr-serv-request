@@ -6,8 +6,10 @@ const http = require('http');
 const empty = {};
 
 const COOKIE_RE = /([^=]+)=(.+?)(?:; |$)/g;
+const TEMPLATE_KEY_RE = /\{\{([-\w]+)\}\}/g;
 
 function Request (request, response) {
+  this.preprocessors = {};
   this.request = request;
   this.response = response;
   this.ip = request.socket.remoteAddress;
@@ -103,14 +105,28 @@ Request.prototype.match = function (regExp, callback) {
   return regMatch;
 };
 
+Request.prototype.sendNow = function (data = '') {
+  this.response.writeHead(this.status, this.headers);
+  this.response.end(data);
+  return this;
+};
+
 Request.prototype.send = function (data = '', ext) {
+  const request = this;
+
   if (ext) {
     this.headers[HEADER.CONTENT_TYPE] = MIME[ext] || MIME.octet;
   }
   this.headers[HEADER.CONTENT_LENGTH] = Buffer.byteLength(data);
-  this.response.writeHead(this.status, this.headers);
-  this.response.end(data);
-};
+
+  if (this.preprocessors.beforeSend) {
+    this.preprocessors.beforeSend.call(this, data).then(function (newData) {
+      request.sendNow(newData === undefined ? data : newData);
+    }).catch(function () {});
+  } else {
+    request.sendNow(data);
+  }
+}
 
 Request.prototype.route = function (router) {
   const url = this.getUrl();
@@ -118,7 +134,7 @@ Request.prototype.route = function (router) {
   const request = this;
 
   if (!route) {
-    return;
+    return false;
   }
 
   if (route instanceof Function) {
@@ -229,5 +245,32 @@ Request.prototype.redirect = function (path, status = 307) {
 Request.prototype.getUrl = function (path) {
   return new Url(path || this.request.url);
 };
+
+Request.prototype.sendFile = function (file, params = {}) {
+  const request = this;
+
+  return this.getFile({ file, root: params.root })
+    .then(function (data) {
+      let result = data;
+
+      if ('put' in params) {
+        result = result.toString().replace(TEMPLATE_KEY_RE, function (source, key) {
+          return key in params.put ? params.put[key] : source;
+        });
+      }
+
+      if ('type' in params) {
+        request.headers['Content-Type'] = params.type;
+        request.send(result);
+      } else if ('extension' in params) {
+        request.send(result, params.extension);
+      } else {
+        const extension = request.getUrl(file).getExtension();
+        request.send(result, extension);
+      }
+
+      return request;
+    });
+}
 
 module.exports = { Request };
