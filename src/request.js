@@ -6,7 +6,7 @@ const http = require('http');
 const empty = {};
 
 const COOKIE_RE = /([^=]+)=(.+?)(?:; |$)/g;
-const TEMPLATE_KEY_RE = /\{\{([-\w]+)\}\}/g;
+const TEMPLATE_KEY_RE = /\{\{([-\w]+)(?:\|(.*?))?\}\}/g;
 
 function Request (request, response) {
   this.preprocessors = {};
@@ -254,8 +254,12 @@ Request.prototype.sendFile = function (file, params = {}) {
       let result = data;
 
       if ('put' in params) {
-        result = result.toString().replace(TEMPLATE_KEY_RE, function (source, key) {
-          return key in params.put ? params.put[key] : source;
+        result = result.toString().replace(TEMPLATE_KEY_RE, function (source, key, defaultValue) {
+          return key in params.put
+            ? params.put[key]
+            : defaultValue !== undefined
+              ? defaultValue
+              : source;
         });
       }
 
